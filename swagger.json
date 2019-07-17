@@ -1,0 +1,512 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Obligatorio Taller de Front-End",
+        "version": "1.0.0",
+        "title": "League Web API"
+    },
+    "host": "localhost:3000",
+    "basePath": "/api",
+    "tags": [{
+            "name": "User"
+        },
+        {
+            "name": "Teams"
+        },
+        {
+            "name": "Matches"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/user": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create user",
+                "operationId": "createUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Created user object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/User"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "500": {
+                        "description": "Error when creating user"
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Logs user into the system",
+                "description": "No se guardará la sesión de usuario",
+                "operationId": "loginUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string"
+                            },
+                            "password": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "401": {
+                        "description": "User or password is not correct."
+                    }
+                }
+            }
+        },
+        "/user/logout/{userId}": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Logs out current logged in user session",
+                "description": "Will always be succesfull",
+                "operationId": "logoutUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "path",
+                    "name": "userId",
+                    "description": "Created user id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/user/confirmChampionship/{userId}": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Confirm championship",
+                "operationId": "confirmChampionship",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "path",
+                    "name": "userId",
+                    "description": "Created user id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Match"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    },
+                    "403": {
+                        "description": "Championship closed."
+                    },
+                    "400": {
+                        "description": "User not found."
+                    }
+                }
+            }
+        },
+        "/team/{userId}": {
+            "post": {
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Create team",
+                "operationId": "createTeam",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "path",
+                    "name": "userId",
+                    "description": "Created user id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Created team object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Team"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Team"
+                        }
+                    },
+                    "500": {
+                        "description": "Error when creating team"
+                    },
+                    "403": {
+                        "description": "Championship closed."
+                    },
+                    "400": {
+                        "description": "User not found."
+                    }
+                }
+            }
+        },
+        "/team/{teamId}": {
+            "get": {
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Get team",
+                "operationId": "getTeam",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "path",
+                    "name": "teamId",
+                    "description": "Created team id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Team"
+                        }
+                    },
+                    "500": {
+                        "description": "Error when getting Team"
+                    }
+                }
+            }
+        },
+        "/team/getAllByChampionshipId/{championshipId}": {
+            "get": {
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Get teams by championship",
+                "operationId": "getTeamsByChampionshipId",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "path",
+                    "name": "championshipId",
+                    "description": "Championship Id",
+                    "required": true,
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "schema": {
+                                "$ref": "#/definitions/Team"
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Error when getting teams"
+                    }
+                }
+            }
+        },
+        "/match/{matchId}": {
+            "get": {
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Get match",
+                "operationId": "getMatch",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "path",
+                    "name": "matchId",
+                    "description": "Created match id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Match"
+                        }
+                    },
+                    "500": {
+                        "description": "Error when creating team"
+                    },
+                    "403": {
+                        "description": "Championship closed."
+                    },
+                    "400": {
+                        "description": "User not found."
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Finish match",
+                "description": "Consistency won't be checked.",
+                "operationId": "finishMatch",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "path",
+                    "name": "matchId",
+                    "description": "Created match id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Created match object",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Match"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Match"
+                        }
+                    },
+                    "500": {
+                        "description": "Error when creating team"
+                    },
+                    "403": {
+                        "description": "Championship closed."
+                    },
+                    "400": {
+                        "description": "User not found."
+                    }
+                }
+            }
+        },
+        "/match/getAllByChampionshipId/{championshipId}": {
+            "get": {
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Get matches by championship",
+                "operationId": "getMatchesByChampionshipId",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [{
+                    "in": "path",
+                    "name": "championshipId",
+                    "description": "Championship Id",
+                    "required": true,
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "schema": {
+                                "$ref": "#/definitions/Match"
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Error when getting matches"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            },
+            "xml": {
+                "name": "User"
+            }
+        },
+        "Team": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "primaryColor": {
+                    "type": "string"
+                },
+                "secondaryColor": {
+                    "type": "string"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "lastName": {
+                                "type": "string"
+                            },
+                            "birthDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "number": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            },
+            "xml": {
+                "name": "Team"
+            }
+        },
+        "Match": {
+            "type": "object",
+            "properties": {
+                "played": {
+                    "type": "boolean"
+                },
+                "team1": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "score": {
+                            "type": "number"
+                        },
+                        "players": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "team2": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "score": {
+                            "type": "number"
+                        },
+                        "players": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "playerId": {
+                                "type": "string"
+                            },
+                            "minute": {
+                                "type": "number"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": ["GOAL", "OWN_GOAL", "YELLOW_CARD", "RED_CARD"],
+                                "description": "GOAL, OWN_GOAL, YELLOW_CARD, RED_CARD"
+                            }
+                        }
+                    }
+                }
+            },
+            "xml": {
+                "name": "Match"
+            }
+        }
+    }
+}
