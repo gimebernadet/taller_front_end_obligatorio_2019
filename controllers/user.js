@@ -5,10 +5,10 @@ var championshipModel = require('../models/championship');
 const TeamController = require('../controllers/team');
 const MatchController = require('../controllers/match');
 const mongoose = require('mongoose');
+const exceptions = require('../utils/exceptions');
 
 module.exports = {
-    createUser: (req, res) => {
-        let userData = req.body
+    createUser: (userData, success, error) => {
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(userData.password, salt);
         userData.password = hash;
@@ -24,33 +24,26 @@ module.exports = {
 
         user.save({
             validateBeforeSave: true
-        }, err => {
+        }, (err, result) => {
             if (err) {
-                console.log('User save error:', err);
-                res.status(500).end('User save error');
+                error(new exceptions.LoginError('User or password is not correct.'))
             } else {
-                user.password = "********";
-                console.log('User created:', user);
-                res.send(JSON.stringify(user));
+                success(result)
             }
         })
     },
-    login: (req, res) => {
+    login: (userData, success, error) => {
         User.findOne({
-            email: req.body.email
+            email: userData.email
         }, (err, result) => {
             if (err || !result) {
-                console.log('User or password is not correct 1.', req.body.email);
-                res.status(401).end("User or password is not correct.");
+                error(new exceptions.LoginError('User or password is not correct.'))
             } else {
-                const login = bcrypt.compareSync(req.body.password, result.password);
+                const login = bcrypt.compareSync(userData.password, result.password);
                 if (login) {
-                    console.log('User logged-in:', req.body.email);
-                    result.password = "********";
-                    res.send(JSON.stringify(result));
+                    success(result)
                 } else {
-                    console.log('User or password is not correct 2.', req.body.email);
-                    res.status(401).end("User or password is not correct.");
+                    error(new exceptions.LoginError('User or password is not correct.'))
                 }
             }
         })
@@ -58,22 +51,18 @@ module.exports = {
     getUser: (userId, callback) => {
         return User.findById(userId, callback)
     },
-    confirmChampionship: (req, res) => {
-        User.findById(req.params.userId, (err1, user) => {
+    confirmChampionship: (userId, success, error) => {
+        User.findById(userId, (err1, user) => {
             if (err1) {
-                console.log('User get error:', err1);
-                res.status(500).end("Internal server error.");
+                error(new exceptions.InternalError(err1))
             } else if (!user) {
-                console.log('User not found.', err1);
-                res.status(401).end("User not found.");
+                error(new exceptions.ResourceNotFoundError(`User  ${userId}`))
             } else if (!user.championship.isConfirmed) {
                 TeamController.getAllByChampionshipId(user.championship._id, (err2, teams) => {
                     if (err2) {
-                        console.log('Get Teams error', err2);
-                        res.status(500).end("Internal server error.");
+                        error(new exceptions.InternalError(err2))
                     } else if (!teams || teams.length < 5) {
-                        console.log('Not enought teams, count:', teams.length);
-                        res.status(401).end("There are not enougth teams.");
+                        error(new exceptions.MethodNotAllowed(`Not enought teams, needs 5 and has: ${teams.length}`))
                     } else {
                         let matches = [];
                         for (let i = 0; i < teams.length; i++) {
@@ -101,20 +90,22 @@ module.exports = {
                         }
                         MatchController.createMatches(matches, (err3, result) => {
                             if (err3 || !result) {
-                                console.log('Match create error', err3);
-                                res.status(500).end("Internal server error.");
+                                error(new exceptions.InternalError(err3))
                             } else {
-                                console.log('Matches created')
                                 user.championship.isConfirmed = true;
-                                user.save();
-                                res.send(JSON.stringify(result));
+                                user.save((err4, _) => {
+                                    if (err4) {
+                                        error(new exceptions.InternalError(err4))
+                                    } else {
+                                        success(result)
+                                    }
+                                });
                             }
                         })
                     }
                 })
             } else {
-                console.log('Championship already confirmed.');
-                res.status(401).end("Championship already confirmed.");
+                error(new exceptions.MethodNotAllowed('Championship already confirmed.'))
             }
         })
     }

@@ -4,24 +4,22 @@ const playerModel = require('../models/player');
 const mongoose = require('mongoose');
 
 module.exports = {
-    createTeam: (req, res) => {
-        User.findById(req.params.userId, (err, resultUser) => {
+    createTeam: (userId, teamData, success, error) => {
+        User.findById(userId, (err, resultUser) => {
             if (err) {
-                console.log('User get error:', err);
-                res.status(err.status).end(err.toString());
+                error(new exceptions.InternalError(err))
             } else if (!resultUser) {
-                console.log('User not found', req.params.userId);
-                res.status(400).end('User not found');
+                error(new exceptions.ResourceNotFoundError(`User  ${userId}`))
             } else {
                 if (!resultUser.championship.isConfirmed) {
                     const team = new Team();
-                    team.name = req.body.name;
+                    team.name = teamData.name;
                     team.championshipId = resultUser.championship._id;
-                    team.primaryColor = req.body.primaryColor;
-                    team.secondaryColor = req.body.secondaryColor;
+                    team.primaryColor = teamData.primaryColor;
+                    team.secondaryColor = teamData.secondaryColor;
 
                     let players = [];
-                    req.body.players.forEach(p => {
+                    teamData.players.forEach(p => {
                         const player = new playerModel.createPlayer();
                         player.name = p.name;
                         player.lastName = p.lastName;
@@ -33,32 +31,27 @@ module.exports = {
 
                     team.save({
                         validateBeforeSave: true
-                    }, (error, result) => {
-                        if (error) {
-                            console.log('Team save error:', error);
-                            res.status(500).end('Team save error');
+                    }, (err1, result) => {
+                        if (err1) {
+                            error(new exceptions.InternalError(err1))
                         } else {
-                            console.log('Team created:', result);
-                            res.send(JSON.stringify(result));
+                            success(result);
                         }
                     })
                 } else {
-                    res.status(403).end('Forbidden: Championship closed');
+                    error(new exceptions.MethodNotAllowed('Championship already confirmed.'))
                 }
             }
         })
     },
-    getById: (req, res) => {
-        Team.findById(req.params.teamId, (err, team) => {
+    getById: (teamId, success, error) => {
+        Team.findById(teamId, (err, team) => {
             if (err) {
-                console.log('Team get error:', err);
-                res.status(err.status).end(err.toString());
+                error(new exceptions.InternalError(err))
             } else if (!team) {
-                console.log('Team not found', req.params.teamId);
-                res.status(400).end('Team not found');
+                error(new exceptions.ResourceNotFoundError(`Team  ${teamId}`))
             } else {
-                console.log('Get Team by id:', team);
-                res.send(JSON.stringify(team));
+                success(team);
             }
         })
     },
