@@ -12,8 +12,8 @@ class DomainError extends Error {
 
 class ResourceNotFoundError extends DomainError {
     constructor(resource) {
-        this.status = 404
         super(`Resource ${resource} was not found.`);
+        this.status = 404
         this.data = {
             resource
         };
@@ -22,8 +22,8 @@ class ResourceNotFoundError extends DomainError {
 
 class MethodNotAllowed extends DomainError {
     constructor(reason) {
-        this.status = 405
         super(`Method Not Allowed.`);
+        this.status = 405
         this.reason = reason;
     }
 }

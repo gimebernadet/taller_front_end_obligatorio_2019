@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const constants = require('../utils/constants')
 const EVENT_TYPES = constants.EVENT_TYPES;
 const Schema = mongoose.Schema;
+const event = require('./event');
 
 const matchSchema = Schema({
     championshipId: {
@@ -71,27 +72,51 @@ const matchSchema = Schema({
             }
         }
     },
-    events: [{
-        playerId: {
-            type: Schema.Types.ObjectId,
-            ref: 'player'
-        },
-        minute: {
-            type: Number,
-            required: true,
-            min: 0,
-            max: 150
-        },
-        type: {
-            type: String,
-            validate: {
-                validator: function (value) {
-                    return (new Set([EVENT_TYPES.GOAL, EVENT_TYPES.OWN_GOAL, EVENT_TYPES.RED_CARD, EVENT_TYPES.YELLOW_CARD])).has(value)
-                },
-                message: _ => `Invalid event type ${value}`
-            }
+    events: {
+        type: [event.eventSchema],
+        validate: {
+            validator: function (events) {
+                const that = this;
+                return new Promise(function (resolve, reject) {
+                    var p1 = new Promise(function (res, rej) {
+                        that.model('team').findById(
+                            that.team1.id,
+                            function (err, team) {
+                                if (err) {
+                                    rej(false);
+                                }
+                                res(team)
+                            });
+                    });
+                    var p2 = new Promise(function (res, rej) {
+                        that.model('team').findById(
+                            that.team2.id,
+                            function (err, team) {
+                                if (err) {
+                                    res(false);
+                                }
+                                rej(team)
+                            });
+                    });
+
+                    Promise.all([p1, p2]).then(result => {
+                        const team1Players = result[0].players
+                        const team2Players = result[1].players
+                        const players = team1Players.concat(team2Players);
+                        events.forEach(event => {
+                            const player = players.find(p => p._id === event.playerId)
+                            if (!player) {
+                                reject(false);
+                            }
+                            resolve(player)
+                        })
+
+                    });
+                })
+            },
+            message: _ => `A player does not belong to teams.`
         }
-    }]
+    }
 });
 
 module.exports = mongoose.model('match', matchSchema);
