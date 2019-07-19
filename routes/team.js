@@ -18,6 +18,9 @@ router.get('/:teamId', function (req, res, next) {
 })
 
 router.get('/getAllByChampionshipId/:championshipId', function (req, res, next) {
+    if(!req.params.championshipId){
+        return error(new exceptions.BadRequest('Invalid championship data'));
+    }
     TeamController.getAllByChampionshipId(req.params.championshipId, (err, result) => {
         if (err) {
             next(new exceptions.InternalError(err))
