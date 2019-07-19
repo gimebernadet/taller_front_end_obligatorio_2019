@@ -1,4 +1,4 @@
-const config = require('node-config');
+const config = require('./config/properties.json');
 const mongoose = require('mongoose');
 
 const app = require('./app');
