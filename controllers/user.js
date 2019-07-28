@@ -9,6 +9,9 @@ const exceptions = require('../utils/exceptions');
 
 module.exports = {
     createUser: (userData, success, error) => {
+        if(!userData || !userData.name || !userData.email || !userData.password){
+            return error(new exceptions.BadRequest('Invalid user data'));
+        }
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(userData.password, salt);
         userData.password = hash;
@@ -33,6 +36,9 @@ module.exports = {
         })
     },
     login: (userData, success, error) => {
+        if(!userData || !userData.email || !userData.password){
+            return error(new exceptions.BadRequest('Invalid user data'));
+        }
         User.findOne({
             email: userData.email
         }, (err, result) => {
@@ -52,6 +58,9 @@ module.exports = {
         return User.findById(userId, callback)
     },
     confirmChampionship: (userId, success, error) => {
+        if(!userId){
+            return error(new exceptions.BadRequest('Invalid user data'));
+        }
         User.findById(userId, (err1, user) => {
             try {
                 if (err1) {

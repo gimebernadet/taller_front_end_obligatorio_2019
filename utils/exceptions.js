@@ -28,6 +28,14 @@ class MethodNotAllowed extends DomainError {
     }
 }
 
+class BadRequest extends DomainError {
+    constructor(reason) {
+        super(`Bad Request.`);
+        this.status = 400
+        this.reason = reason;
+    }
+}
+
 class InternalError extends DomainError {
     constructor(error) {
         super(error.message);
@@ -49,7 +57,7 @@ module.exports = {
     DomainError,
     LoginError,
     MethodNotAllowed,
+    BadRequest,
     ResourceNotFoundError,
-    InternalError,
-
+    InternalError
 };

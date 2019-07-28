@@ -8,6 +8,9 @@ module.exports = {
         Match.create(matches, callback)
     },
     editMatch: (matchId, matchData, success, error) => {
+        if(!matchId || !matchData || !matchData.events || !matchData.team1 || !matchData.team1.players || !matchData.team2 || !matchData.team2.players ){
+            return error(new exceptions.BadRequest('Invalid match data'));
+        }
         Match.findById(matchId, (err, match) => {
             try {
                 if (err) {
@@ -34,15 +37,11 @@ module.exports = {
                         });
                         match.team1.players = team1_players;
 
-                        match.team1.score = matchData.team1.score;
-
                         let team2_players = [];
                         matchData.team2.players.forEach(p => {
                             team2_players.push(mongoose.Types.ObjectId(p))
                         });
                         match.team2.players = team2_players;
-
-                        match.team2.score = matchData.team2.score;
 
                         match.save((err1, result) => {
                             if (err1) {
@@ -61,6 +60,9 @@ module.exports = {
         })
     },
     getById: (matchId, success, error) => {
+        if(!matchId){
+            return error(new exceptions.BadRequest('Invalid match data'));
+        }
         Match.findById(matchId, (err, match) => {
             if (err) {
                 error(new exceptions.InternalError(err))
