@@ -46,9 +46,6 @@
                         "schema": {
                             "$ref": "#/definitions/User"
                         }
-                    },
-                    "500": {
-                        "description": "Error when creating user"
                     }
                 }
             }
@@ -86,9 +83,6 @@
                         "schema": {
                             "$ref": "#/definitions/User"
                         }
-                    },
-                    "401": {
-                        "description": "User or password is not correct."
                     }
                 }
             }
@@ -145,15 +139,6 @@
                         "schema": {
                             "$ref": "#/definitions/Match"
                         }
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    },
-                    "403": {
-                        "description": "Championship closed."
-                    },
-                    "400": {
-                        "description": "User not found."
                     }
                 }
             }
@@ -191,15 +176,6 @@
                         "schema": {
                             "$ref": "#/definitions/Team"
                         }
-                    },
-                    "500": {
-                        "description": "Error when creating team"
-                    },
-                    "403": {
-                        "description": "Championship closed."
-                    },
-                    "400": {
-                        "description": "User not found."
                     }
                 }
             }
@@ -229,9 +205,6 @@
                         "schema": {
                             "$ref": "#/definitions/Team"
                         }
-                    },
-                    "500": {
-                        "description": "Error when getting Team"
                     }
                 }
             }
@@ -263,9 +236,6 @@
                 "responses": {
                     "200": {
                         "description": "Successful operation"
-                    },
-                    "500": {
-                        "description": "Error when getting teams"
                     }
                 }
             }
@@ -295,15 +265,6 @@
                         "schema": {
                             "$ref": "#/definitions/Match"
                         }
-                    },
-                    "500": {
-                        "description": "Error when creating team"
-                    },
-                    "403": {
-                        "description": "Championship closed."
-                    },
-                    "400": {
-                        "description": "User not found."
                     }
                 }
             },
@@ -340,15 +301,6 @@
                         "schema": {
                             "$ref": "#/definitions/Match"
                         }
-                    },
-                    "500": {
-                        "description": "Error when creating team"
-                    },
-                    "403": {
-                        "description": "Championship closed."
-                    },
-                    "400": {
-                        "description": "User not found."
                     }
                 }
             }
@@ -380,9 +332,6 @@
                 "responses": {
                     "200": {
                         "description": "Successful operation"
-                    },
-                    "500": {
-                        "description": "Error when getting matches"
                     }
                 }
             }
