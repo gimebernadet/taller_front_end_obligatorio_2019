@@ -9,7 +9,7 @@ const exceptions = require('../utils/exceptions');
 
 module.exports = {
     createUser: (userData, success, error) => {
-        if(!userData || !userData.name || !userData.email || !userData.password){
+        if (!userData || !userData.name || !userData.email || !userData.password || userData.password.length < 8) {
             return error(new exceptions.BadRequest('Invalid user data'));
         }
         const salt = bcrypt.genSaltSync(10);
@@ -29,21 +29,23 @@ module.exports = {
             validateBeforeSave: true
         }, (err, result) => {
             if (err) {
-                error(new exceptions.LoginError('User or password is not correct.'))
+                error(new exceptions.InternalError(err))
             } else {
                 success(result)
             }
         })
     },
     login: (userData, success, error) => {
-        if(!userData || !userData.email || !userData.password){
+        if (!userData || !userData.email || !userData.password) {
             return error(new exceptions.BadRequest('Invalid user data'));
         }
         User.findOne({
             email: userData.email
         }, (err, result) => {
-            if (err || !result) {
-                error(new exceptions.LoginError('User or password is not correct.'))
+            if (err) {
+                error(new exceptions.InternalError(err))
+            } else if (!result) {
+                error(new exceptions.ResourceNotFoundError(`User  ${userData.email}`))
             } else {
                 const login = bcrypt.compareSync(userData.password, result.password);
                 if (login) {
@@ -58,7 +60,7 @@ module.exports = {
         return User.findById(userId, callback)
     },
     confirmChampionship: (userId, success, error) => {
-        if(!userId){
+        if (!userId) {
             return error(new exceptions.BadRequest('Invalid user data'));
         }
         User.findById(userId, (err1, user) => {

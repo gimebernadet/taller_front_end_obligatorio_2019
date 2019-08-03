@@ -14,20 +14,14 @@ const userSchema = Schema({
         unique: true,
         validate: {
             validator: function (v) {
-                return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(v);
+                return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v);
             },
             message: _ => `Invalid email`
         }
     },
     password: {
         type: String,
-        required: true,
-        validate: {
-            validator: function (v) {
-                return v.length >= 8;
-            },
-            message: _ => `Password must have at least 8 characters`
-        }
+        required: true
     },
     championship: championship.championshipSchema
 });
