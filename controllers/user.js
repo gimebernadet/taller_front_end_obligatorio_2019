@@ -29,7 +29,7 @@ module.exports = {
             validateBeforeSave: true
         }, (err, result) => {
             if (err) {
-                error(new exceptions.InternalError(err))
+                error(new exceptions.TransactionError(err))
             } else {
                 success(result)
             }
@@ -43,7 +43,7 @@ module.exports = {
             email: userData.email
         }, (err, result) => {
             if (err) {
-                error(new exceptions.InternalError(err))
+                error(new exceptions.TransactionError(err))
             } else if (!result) {
                 error(new exceptions.ResourceNotFoundError(`User  ${userData.email}`))
             } else {
@@ -66,14 +66,14 @@ module.exports = {
         User.findById(userId, (err1, user) => {
             try {
                 if (err1) {
-                    error(new exceptions.InternalError(err1))
+                    error(new exceptions.TransactionError(err1))
                 } else if (!user) {
                     error(new exceptions.ResourceNotFoundError(`User  ${userId}`))
                 } else if (!user.championship.isConfirmed) {
 
                     TeamController.getAllByChampionshipId(user.championship._id, (err2, teams) => {
                         if (err2) {
-                            error(new exceptions.InternalError(err2))
+                            error(new exceptions.TransactionError(err2))
                         } else if (!teams || teams.length < 5) {
                             error(new exceptions.MethodNotAllowed(`Not enought teams, needs 5 and has: ${teams.length}`))
                         } else {
@@ -103,12 +103,12 @@ module.exports = {
                             }
                             MatchController.createMatches(matches, (err3, result) => {
                                 if (err3 || !result) {
-                                    error(new exceptions.InternalError(err3))
+                                    error(new exceptions.TransactionError(err3))
                                 } else {
                                     user.championship.isConfirmed = true;
                                     user.save((err4, _) => {
                                         if (err4) {
-                                            error(new exceptions.InternalError(err4))
+                                            error(new exceptions.TransactionError(err4))
                                         } else {
                                             success(result)
                                         }
@@ -121,7 +121,7 @@ module.exports = {
                     error(new exceptions.MethodNotAllowed('Championship already confirmed.'))
                 }
             } catch (err4) {
-                error(new exceptions.InternalError(err2))
+                error(new exceptions.TransactionError(err2))
             }
         })
     }

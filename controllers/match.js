@@ -14,7 +14,7 @@ module.exports = {
         Match.findById(matchId, (err, match) => {
             try {
                 if (err) {
-                    error(new exceptions.InternalError(err))
+                    error(new exceptions.TransactionError(err))
                 } else if (!match) {
                     error(new exceptions.ResourceNotFoundError(`Match  ${matchId}`))
                 } else {
@@ -45,7 +45,7 @@ module.exports = {
 
                         match.save((err1, result) => {
                             if (err1) {
-                                error(new exceptions.InternalError(err1))
+                                error(new exceptions.TransactionError(err1))
                             } else {
                                 success(result);
                             }
@@ -55,7 +55,7 @@ module.exports = {
                     }
                 }
             } catch (err2) {
-                error(new exceptions.InternalError(err2))
+                error(new exceptions.TransactionError(err2))
             }
         })
     },
@@ -65,7 +65,7 @@ module.exports = {
         }
         Match.findById(matchId, (err, match) => {
             if (err) {
-                error(new exceptions.InternalError(err))
+                error(new exceptions.TransactionError(err))
             } else if (!match) {
                 error(new exceptions.ResourceNotFoundError(`Match  ${matchId}`))
             } else {

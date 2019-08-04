@@ -23,7 +23,7 @@ router.get('/getAllByChampionshipId/:championshipId', function (req, res, next) 
     }
     TeamController.getAllByChampionshipId(req.params.championshipId, (err, result) => {
         if (err) {
-            next(new exceptions.InternalError(err))
+            next(new exceptions.TransactionError(err))
         } else {
             console.log(`Team getAllByChampionshipId ${req.params.championshipId}`);
             res.send(JSON.stringify(result));

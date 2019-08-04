@@ -15,7 +15,7 @@ module.exports = {
         User.findById(userId, (err, resultUser) => {
             try {
                 if (err) {
-                    error(new exceptions.InternalError(err))
+                    error(new exceptions.TransactionError(err))
                 } else if (!resultUser) {
                     error(new exceptions.ResourceNotFoundError(`User  ${userId}`))
                 } else {
@@ -41,7 +41,7 @@ module.exports = {
                             validateBeforeSave: true
                         }, (err1, result) => {
                             if (err1) {
-                                error(new exceptions.InternalError(err1))
+                                error(new exceptions.TransactionError(err1))
                             } else {
                                 success(result);
                             }
@@ -51,7 +51,7 @@ module.exports = {
                     }
                 }
             } catch (err2) {
-                error(new exceptions.InternalError(err2))
+                error(new exceptions.TransactionError(err2))
             }
         })
     },
@@ -61,7 +61,7 @@ module.exports = {
         }
         Team.findById(teamId, (err, team) => {
             if (err) {
-                error(new exceptions.InternalError(err))
+                error(new exceptions.TransactionError(err))
             } else if (!team) {
                 error(new exceptions.ResourceNotFoundError(`Team  ${teamId}`))
             } else {

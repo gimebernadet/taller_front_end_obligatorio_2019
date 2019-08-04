@@ -36,13 +36,18 @@ class BadRequest extends DomainError {
     }
 }
 
-class InternalError extends DomainError {
+class TransactionError extends Error {
     constructor(error) {
         super(error.message);
-        this.status = 500;
+        const isValidationError = error.name === 'ValidationError';
+        this.name = isValidationError ? 'BadRequest' : 'InternalServerError';
+        this.isOperational = true;
+        this.status = isValidationError ? 400 : 500;
         this.data = {
             error
         };
+
+        Error.captureStackTrace(this, this.constructor);
     }
 }
 
@@ -59,5 +64,5 @@ module.exports = {
     MethodNotAllowed,
     BadRequest,
     ResourceNotFoundError,
-    InternalError
+    TransactionError
 };
