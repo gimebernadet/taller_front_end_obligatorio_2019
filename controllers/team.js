@@ -6,10 +6,10 @@ const exceptions = require('../utils/exceptions');
 
 module.exports = {
     createTeam: (userId, teamData, success, error) => {
-        if(!userId){
+        if (!userId) {
             return error(new exceptions.BadRequest('Invalid user data'));
         }
-        if(!teamData || !teamData.name || !teamData.championshipId || !teamData.primaryColor || !teamData.secondaryColor || !teamData.players ){
+        if (!teamData || !teamData.name || !teamData.primaryColor || !teamData.secondaryColor || !teamData.players) {
             return error(new exceptions.BadRequest('Invalid team data'));
         }
         User.findById(userId, (err, resultUser) => {
@@ -56,7 +56,7 @@ module.exports = {
         })
     },
     getById: (teamId, success, error) => {
-        if(!teamId){
+        if (!teamId) {
             return error(new exceptions.BadRequest('Invalid team data'));
         }
         Team.findById(teamId, (err, team) => {

@@ -63,66 +63,71 @@ module.exports = {
         if (!userId) {
             return error(new exceptions.BadRequest('Invalid user data'));
         }
-        User.findById(userId, (err1, user) => {
-            try {
-                if (err1) {
-                    error(new exceptions.TransactionError(err1))
-                } else if (!user) {
-                    error(new exceptions.ResourceNotFoundError(`User  ${userId}`))
-                } else if (!user.championship.isConfirmed) {
+        try {
+            User.findById(userId, (err1, user) => {
+                try {
+                    if (err1) {
+                        error(new exceptions.TransactionError(err1))
+                    } else if (!user) {
+                        error(new exceptions.ResourceNotFoundError(`User  ${userId}`))
+                    } else if (!user.championship.isConfirmed) {
 
-                    TeamController.getAllByChampionshipId(user.championship._id, (err2, teams) => {
-                        if (err2) {
-                            error(new exceptions.TransactionError(err2))
-                        } else if (!teams || teams.length < 5) {
-                            error(new exceptions.MethodNotAllowed(`Not enought teams, needs 5 and has: ${teams.length}`))
-                        } else {
-                            let matches = [];
-                            for (let i = 0; i < teams.length; i++) {
-                                for (let j = i + 1; j < teams.length; j++) {
-                                    const t1 = teams[i];
-                                    const t2 = teams[j];
+                        TeamController.getAllByChampionshipId(user.championship._id, (err2, teams) => {
+                            if (err2) {
+                                error(new exceptions.TransactionError(err2))
+                            } else if (!teams || teams.length < 5) {
+                                error(new exceptions.MethodNotAllowed(`Not enought teams, needs 5 and has: ${teams.length}`))
+                            } else {
 
-                                    const match = {
-                                        championshipId: mongoose.Types.ObjectId(user.championship._id),
-                                        played: false,
-                                        events: [],
-                                        team1: {
-                                            id: t1._id,
-                                            players: [],
-                                            score: 0
-                                        },
-                                        team2: {
-                                            id: t2._id,
-                                            players: [],
-                                            score: 0
-                                        },
-                                    }
-                                    matches.push(new Match(match))
-                                }
-                            }
-                            MatchController.createMatches(matches, (err3, result) => {
-                                if (err3 || !result) {
-                                    error(new exceptions.TransactionError(err3))
-                                } else {
-                                    user.championship.isConfirmed = true;
-                                    user.save((err4, _) => {
-                                        if (err4) {
-                                            error(new exceptions.TransactionError(err4))
-                                        } else {
-                                            success(result)
+                                let matches = [];
+                                for (let i = 0; i < teams.length; i++) {
+                                    for (let j = i + 1; j < teams.length; j++) {
+                                        const t1 = teams[i];
+                                        const t2 = teams[j];
+
+                                        const match = {
+                                            championshipId: mongoose.Types.ObjectId(user.championship._id),
+                                            events: [],
+                                            team1: {
+                                                id: t1._id,
+                                                players: [],
+                                                score: 0
+                                            },
+                                            team2: {
+                                                id: t2._id,
+                                                players: [],
+                                                score: 0
+                                            },
                                         }
-                                    });
+                                        matches.push(new Match(match))
+                                    }
                                 }
-                            })
-                        }
-                    })
-                } else {
-                    error(new exceptions.MethodNotAllowed('Championship already confirmed.'))
+
+                                MatchController.createMatches(matches, (err3, result) => {
+                                    if (err3) {
+                                        error(new exceptions.TransactionError(err3))
+                                    } else {
+                                        user.championship.isConfirmed = true;
+                                        user.save((err4, _) => {
+                                            if (err4) {
+                                                error(new exceptions.TransactionError(err4))
+                                            } else {
+                                                success(result)
+                                            }
+                                        });
+                                    }
+                                })
+                            }
+                        })
+                    } else {
+                        error(new exceptions.MethodNotAllowed('Championship already confirmed.'))
+                    }
+                } catch (err4) {
+                    error(new exceptions.TransactionError(err4))
                 }
-            } catch (err4) {
-                error(new exceptions.TransactionError(err2))
-            }
-        })
+            })
+        } catch (err5) {
+            error(new exceptions.TransactionError(err5))
+        }
     }
 }

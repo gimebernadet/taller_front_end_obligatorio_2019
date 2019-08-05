@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const constants = require('../utils/constants')
-const EVENT_TYPES = constants.EVENT_TYPES;
 const Schema = mongoose.Schema;
 const event = require('./event');
 
@@ -9,7 +7,6 @@ const matchSchema = Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
-    played: Boolean,
     team1: {
         id: {
             type: Schema.Types.ObjectId,
@@ -74,48 +71,48 @@ const matchSchema = Schema({
     },
     events: {
         type: [event.eventSchema],
-        validate: {
-            validator: function (events) {
-                const that = this;
-                return new Promise(function (resolve, reject) {
-                    var p1 = new Promise(function (res, rej) {
-                        that.model('team').findById(
-                            that.team1.id,
-                            function (err, team) {
-                                if (err) {
-                                    rej(false);
-                                }
-                                res(team)
-                            });
-                    });
-                    var p2 = new Promise(function (res, rej) {
-                        that.model('team').findById(
-                            that.team2.id,
-                            function (err, team) {
-                                if (err) {
-                                    res(false);
-                                }
-                                rej(team)
-                            });
-                    });
+        // validate: {
+        //     validator: function (events) {
+        //         const that = this;
+        //         return new Promise(function (resolve, reject) {
+        //             var p1 = new Promise(function (res, rej) {
+        //                 that.model('team').findById(
+        //                     that.team1.id,
+        //                     function (err, team) {
+        //                         if (err) {
+        //                             rej(false);
+        //                         }
+        //                         res(team)
+        //                     });
+        //             });
+        //             var p2 = new Promise(function (res, rej) {
+        //                 that.model('team').findById(
+        //                     that.team2.id,
+        //                     function (err, team) {
+        //                         if (err) {
+        //                             res(false);
+        //                         }
+        //                         rej(team)
+        //                     });
+        //             });
 
-                    Promise.all([p1, p2]).then(result => {
-                        const team1Players = result[0].players
-                        const team2Players = result[1].players
-                        const players = team1Players.concat(team2Players);
-                        events.forEach(event => {
-                            const player = players.find(p => p._id === event.playerId)
-                            if (!player) {
-                                reject(false);
-                            }
-                            resolve(player)
-                        })
+        //             Promise.all([p1, p2]).then(result => {
+        //                 const team1Players = result[0].players
+        //                 const team2Players = result[1].players
+        //                 const players = team1Players.concat(team2Players);
+        //                 events.forEach(event => {
+        //                     const player = players.find(p => p._id === event.playerId)
+        //                     if (!player) {
+        //                         reject(false);
+        //                     }
+        //                     resolve(player)
+        //                 })
 
-                    });
-                })
-            },
-            message: _ => `A player does not belong to teams.`
-        }
+        //             });
+        //         })
+        //     },
+        //     message: _ => `A player does not belong to teams.`
+        // }
     }
 });
 
