@@ -22,8 +22,7 @@ module.exports = {
                 } else if (!match) {
                     error(new exceptions.ResourceNotFoundError(`Match  ${matchId}`))
                 } else {
-                    if (!match.played) {
-                        match.played = true;
+                    if (!(match.events && match.events.length > 0)) {
 
                         let events = [];
                         matchData.events.forEach(e => {

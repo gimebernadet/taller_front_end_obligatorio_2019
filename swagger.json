@@ -5,7 +5,7 @@
         "version": "1.0.0",
         "title": "League Web API"
     },
-    "host": "localhost:3000",
+    "host": "https://taller-frontend.herokuapp.com",
     "basePath": "/api",
     "tags": [{
             "name": "User"
@@ -18,7 +18,7 @@
         }
     ],
     "schemes": [
-        "http"
+        "https"
     ],
     "paths": {
         "/user": {
@@ -396,17 +396,11 @@
         "Match": {
             "type": "object",
             "properties": {
-                "played": {
-                    "type": "boolean"
-                },
                 "team1": {
                     "type": "object",
                     "properties": {
                         "id": {
                             "type": "string"
-                        },
-                        "score": {
-                            "type": "number"
                         },
                         "players": {
                             "type": "array",
@@ -421,9 +415,6 @@
                     "properties": {
                         "id": {
                             "type": "string"
-                        },
-                        "score": {
-                            "type": "number"
                         },
                         "players": {
                             "type": "array",

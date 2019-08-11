@@ -5,8 +5,7 @@ const Schema = mongoose.Schema;
 
 const eventSchema = Schema({
     playerId: {
-        type: Schema.Types.ObjectId,
-        ref: 'player'
+        type: Schema.Types.ObjectId
     },
     minute: {
         type: Number,
@@ -16,16 +15,16 @@ const eventSchema = Schema({
     },
     type: {
         type: String,
-        validate: {
-            validator: function (value) {
-                return (new Set([EVENT_TYPES.GOAL, EVENT_TYPES.OWN_GOAL, EVENT_TYPES.RED_CARD, EVENT_TYPES.YELLOW_CARD])).has(value)
-            },
-            message: _ => `Invalid event type ${value}`
-        }
+        // validate: {
+        //     validator: function (value) {
+        //         return (new Set([EVENT_TYPES.GOAL, EVENT_TYPES.OWN_GOAL, EVENT_TYPES.RED_CARD, EVENT_TYPES.YELLOW_CARD])).has(value)
+        //     },
+        //     message: _ => `Invalid event type ${value}`
+        // }
     }
 });
 
 module.exports = {
-    createPlayer: mongoose.model('event', eventSchema),
+    createEvent: mongoose.model('event', eventSchema),
     eventSchema
 }

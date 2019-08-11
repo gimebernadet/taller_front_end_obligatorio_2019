@@ -14,28 +14,28 @@ const matchSchema = Schema({
             required: true
         },
         players: {
-            type: [Schema.Types.ObjectId],
-            validate: {
-                validator: function (value) {
-                    const repeated = value.length > 0 ? (new Set(value)).size == value.length : false;
-                    const that = this;
-                    return new Promise(function (resolve, reject) {
-                        that.model('team').findById(
-                            that.team1.id,
-                            function (err, team) {
-                                if (err) {
-                                    reject(false);
-                                }
-                                let exists = true;
-                                value.forEach(v => {
-                                    return exists && team.players[v]
-                                })
-                                resolve(!repeated && exists)
-                            });
-                    });
-                },
-                message: _ => `A player does not belong to the team`
-            }
+            type: [Schema.Types.ObjectId]
+            // validate: {
+            //     validator: function (value) {
+            //         const repeated = value.length > 0 ? (new Set(value)).size == value.length : false;
+            //         const that = this;
+            //         return new Promise(function (resolve, reject) {
+            //             that.model('team').findById(
+            //                 that.team1.id,
+            //                 function (err, team) {
+            //                     if (err) {
+            //                         reject(false);
+            //                     }
+            //                     let exists = true;
+            //                     value.forEach(v => {
+            //                         return exists && team.players[v]
+            //                     })
+            //                     resolve(!repeated && exists)
+            //                 });
+            //         });
+            //     },
+            //     message: _ => `A player does not belong to the team`
+            // }
         }
     },
     team2: {
@@ -46,27 +46,27 @@ const matchSchema = Schema({
         },
         players: {
             type: [Schema.Types.ObjectId],
-            validate: {
-                validator: function (value) {
-                    const repeated = value.length > 0 ? (new Set(value)).size == value.length : false;
-                    const that = this;
-                    return new Promise(function (resolve, reject) {
-                        that.model('team').findById(
-                            that.team2.id,
-                            function (err, team) {
-                                if (err) {
-                                    reject(false);
-                                }
-                                let exists = true;
-                                value.forEach(v => {
-                                    return exists && team.players[v]
-                                })
-                                resolve(!repeated && exists)
-                            });
-                    });
-                },
-                message: _ => `A player does not belong to the team`
-            }
+            // validate: {
+            //     validator: function (value) {
+            //         const repeated = value.length > 0 ? (new Set(value)).size == value.length : false;
+            //         const that = this;
+            //         return new Promise(function (resolve, reject) {
+            //             that.model('team').findById(
+            //                 that.team2.id,
+            //                 function (err, team) {
+            //                     if (err) {
+            //                         reject(false);
+            //                     }
+            //                     let exists = true;
+            //                     value.forEach(v => {
+            //                         return exists && team.players[v]
+            //                     })
+            //                     resolve(!repeated && exists)
+            //                 });
+            //         });
+            //     },
+            //     message: _ => `A player does not belong to the team`
+            // }
         }
     },
     events: {

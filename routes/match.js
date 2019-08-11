@@ -3,6 +3,7 @@ const router = express.Router();
 const MatchController = require('../controllers/match');
 
 router.put('/:matchId', function (req, res, next) {
+    console.log('finish Match ');
     MatchController.editMatch(req.params.matchId, req.body, (result) => {
         console.log('Match finish:', result);
         res.send(JSON.stringify(result));
@@ -17,7 +18,7 @@ router.get('/:matchId', function (req, res, next) {
 })
 
 router.get('/getAllByChampionshipId/:championshipId', function (req, res, next) {
-    if(!req.params.championshipId){
+    if (!req.params.championshipId) {
         return error(new exceptions.BadRequest('Invalid championship data'));
     }
     MatchController.getAllByChampionshipId(req.params.championshipId, (err, result) => {
